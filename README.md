@@ -4,6 +4,9 @@
 ## Dataset
 **data/**: Contains all the original captures from perf
 
+- fulldataset.csv: for fastClick
+- fulldataset-all.csv: for all routers
+
 ### Features
 **normalized_features.csv**: Contains the difference, measured in ratios of the standard deviation, between the average of the single experiment to the global average.
 
