@@ -1,5 +1,7 @@
 # Repository
 
+This repository contains the data, the tables and the scripts used for the hotnets paper #77
+
 
 ## Dataset
 **data/**: Contains all the original captures from perf
