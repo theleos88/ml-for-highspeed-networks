@@ -1,6 +1,6 @@
 # Repository
 
-This repository contains the data, the tables and the scripts used for our PAM2021 paper.
+This repository contains the data, the tables and the scripts used for our ATC2021 paper.
 
 ## Dataset
 **data/**: Contains all the original captures from perf
