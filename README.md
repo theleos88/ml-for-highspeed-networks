@@ -22,3 +22,6 @@ The measurements are specific for our system, which consists of a COTS server wi
 
 **examples.tlv**: For three sample experiments, we plot the cosine similarities w.r.t. other experiments
 
+## Contributing
+
+If you want to follow our methodology, you can also do a pull request. It would be nice to have at least the configuration of the system from which the data come from.
