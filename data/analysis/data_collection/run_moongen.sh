@@ -1,13 +1,12 @@
 #!/bin/bash
 
-# This script is created to measure the throughput and latency of Software/Virtual switches
+# This script is created to measure the throughput and latency of the target NFV data plane
 
+# Default values to some system-level parameters.
 MOONGEN_DIR="/home/tzhang/MoonGen/"
 CURR_DIR="$(pwd)"
-
-# default values for packet rates [Mbps] and packet size [bytes]
-rate=10000
-size=60
+IN_PORT=0
+OUT_PORT=1
 
 if [[ "${UID}" -ne 0 ]]
 then
@@ -25,13 +24,10 @@ while getopts ":s:r:" arg; do
 		r)
 			rate="${OPTARG}"
 			;;
-		h | *)
+		h | : | *)
 			usage
 			;;
 	esac
 done
 
-echo "Packet rate: ${rate}, Packet size: ${size}"
-
-cd "${MOONGEN_DIR}"
-sudo ./build/MoonGen "${CURR_DIR}"/"${1}".lua 0 1
+sudo "${MOONGEN_DIR}"/build/MoonGen "${1}" "${IN_PORT}" "${OUT_PORT}"
