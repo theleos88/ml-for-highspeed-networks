@@ -76,7 +76,7 @@ function loadSlave(queue, rxDev, size)
 	if queue.qid == 0
 	then
 		txCtr = stats:newDevTxCounter(queue, "CSV", "tx_stats.csv")
-		rxCtr = stats:newDevRxCounter(rxDev, "plain")
+		rxCtr = stats:newDevRxCounter(rxDev, "CSV", "rx_stats.csv")
 	end
 
 	local baseIP = parseIPAddress(SRC_IP_BASE)
@@ -123,6 +123,4 @@ function loadSlave(queue, rxDev, size)
 		rxCtr:update()
 	end
 
-	--txCtr:finalize()
-	--rxCtr:finalize()
 end

@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# This script is created to measure the throughput and latency of the target NFV data plane
+# This script is created to measure the high-level performance metrics
+# (e.g., throughput and latency) of the target high-speed NFV dataplane
 
 # Default values to some system-level parameters.
 MOONGEN_DIR="/home/tzhang/MoonGen/"
