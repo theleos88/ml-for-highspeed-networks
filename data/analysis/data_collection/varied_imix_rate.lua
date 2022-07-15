@@ -13,6 +13,7 @@ local stats  = require "stats"
 local timer  = require "timer"
 local arp    = require "proto.arp"
 local log    = require "log"
+local ts     = require "timestamping"
 
 local ffi = require "ffi"
 
@@ -37,6 +38,7 @@ function master(args)
 	device.waitForLinks()
 
 	mg.startTask("loadSlave", txDev:getTxQueue(0), rxDev, 60)
+	mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), 124, 254)
 	mg.waitForTasks()
 end
 
@@ -83,7 +85,7 @@ function loadSlave(queue, rxDev, size)
 
 	-- Standard IMIX packet sizes 
 	local sizes = {60, 60, 60, 60, 60, 60, 60, 566, 566, 566, 566, 1510}
-        local limiter = timer:new(10)
+        local limiter = timer:new(5)
 
         local rates = {500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 9464, 9464, 7000, 6000, 5000, 4000, 3000, 2000, 1000, 500} 
         local r = 2
@@ -103,6 +105,7 @@ function loadSlave(queue, rxDev, size)
                         	rate = rates[r]
 				print("Packet rate adjusted to " .. rate .. " Mbps")
             		else
+				print("Terminating MoonGen...")
                 		break
             		end
 			r = r + 1
@@ -124,3 +127,43 @@ function loadSlave(queue, rxDev, size)
 	end
 
 end
+
+function timerSlave(txQueue, rxQueue, size, flows)
+        if size < 84 then
+                log:warn("Packet size %d is smaller than minimum timestamp size 84. Timestamped packets will be larger than load packets.", size)
+                size = 84
+        end
+        local timestamper = ts:newUdpTimestamper(txQueue, rxQueue)
+        --local hist = hist:new()
+        mg.sleepMillis(1000) -- ensure that the load task is running
+        local counter = 0
+        local rateLimit = timer:new(1)
+        local baseIP = parseIPAddress(SRC_IP_BASE)
+	latency = {}
+        local t = 0
+
+	while mg.running() do
+		t = timestamper:measureLatency(size, function(buf)
+			fillUdpPacket(buf, size)
+			local pkt = buf:getUdpPacket()
+			pkt.ip4.src:set(baseIP + counter)
+			counter = incAndWrap(counter, flows)
+		end) 
+
+                table.insert(latency, t)
+                rateLimit:wait()
+                rateLimit:reset()
+        end
+        -- print the latency stats after all the other stuff
+        mg.sleepMillis(300)
+
+	latency_test = io.open("latency.csv", "w")
+	for i = 1, #latency do
+        	latency_test:write(latency[i].. "\n")
+	end
+
+        latency_test:close(latency_test)
+
+        --hist:save("histogram.csv")
+end
+
