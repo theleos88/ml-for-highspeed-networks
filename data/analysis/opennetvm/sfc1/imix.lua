@@ -23,7 +23,7 @@ local DST_IP      = "10.0.0.10"
 local SRC_PORT    = 1234
 local DST_PORT    = 319
 
-local rate = 10000
+local rate = 2000
 
 local C = ffi.C
 
@@ -31,7 +31,6 @@ function configure(parser)
 	parser:description("Generates UDP traffic and prints out device statistics. Edit the source to modify constants like IPs.")
 	parser:argument("txDev", "Device to transmit from."):convert(tonumber)
 	parser:argument("rxDev", "Device to receive from."):convert(tonumber)
-	--parser:argument("rate", "Transmission rate."):convert(tonumber)
 end
 
 function master(args)
@@ -41,7 +40,9 @@ function master(args)
 
 	mg.startTask("loadSlave", txDev:getTxQueue(0), rxDev, rate)
 	mg.startTask("timerSlave", txDev:getTxQueue(1), rxDev:getRxQueue(1), 124, 1)
+
 	mg.waitForTasks()
+
 end
 
 local function fillUdpPacket(buf, len)
@@ -61,7 +62,7 @@ end
 function loadSlave(queue, rxDev, rate)
 	log:info(green("Starting up: LoadSlave"))
 
-	mg.sleepMillis(3000)
+	--mg.sleepMillis(3000)
 	-- retrieve the number of xstats on the recieving NIC
 	-- xstats related C definitions are in device.lua
 	local numxstats = 0
@@ -80,8 +81,8 @@ function loadSlave(queue, rxDev, rate)
 
 	if queue.qid == 0
 	then
-		txCtr = stats:newDevTxCounter(queue, "plain")--"CSV", "tx_stats.csv")
-		rxCtr = stats:newDevRxCounter(rxDev, "plain")--"CSV", "rx_stats.csv")
+		txCtr = stats:newDevTxCounter(queue, "CSV", "tx_stats.csv")
+		rxCtr = stats:newDevRxCounter(rxDev, "CSV", "rx_stats.csv")
 	end
 
 	local baseIP = parseIPAddress(SRC_IP_BASE)
@@ -90,33 +91,11 @@ function loadSlave(queue, rxDev, rate)
 	local sizes = {60, 60, 60, 60, 60, 60, 60, 566, 566, 566, 566, 1510}
         local limiter = timer:new(10)
 
-        --local rates = {500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 9464, 9464, 7000, 6000, 5000, 4000, 3000, 2000, 1000, 500} 
-        local r = 2
-
-	--os.execute("./perf.sh")
+	os.execute("./perf.sh")
 
 	-- send out UDP packets until the user stops the script
 	while mg.running() do
-		bufs:alloc(512)
-
-        	--[[
-		if limiter:expired()
-        	then
-            		print( "10s expired")
-            		limiter:reset()
-
-            		if r <= #rates
-            		then 
-                        	rate = rates[r]
-				print("Packet rate adjusted to " .. rate .. " Mbps")
-            		else
-				print("Terminating MoonGen...")
-                		break
-            		end
-			r = r + 1
-        	end
-		--]]
-
+		bufs:alloc(60)
 		queue:setRate(rate)
 	
 		for i, buf in ipairs(bufs) do
@@ -136,6 +115,7 @@ end
 
 function timerSlave(txQueue, rxQueue, size, flows)
 	log:info(green("Starting up: timerSlave"))
+
         if size < 84 then
                 log:warn("Packet size %d is smaller than minimum timestamp size 84. Timestamped packets will be larger than load packets.", size)
                 size = 84
@@ -163,7 +143,8 @@ function timerSlave(txQueue, rxQueue, size, flows)
                 rateLimit:reset()
         end
 
-	--os.execute("sudo killall perf")
+	os.execute("sudo killall perf")
+
         -- print the latency stats after all the other stuff
         mg.sleepMillis(300)
    
