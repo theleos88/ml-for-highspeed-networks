@@ -136,7 +136,12 @@ function timerSlave(txQueue, rxQueue, size, flows)
 			local pkt = buf:getUdpPacket()
 			pkt.ip4.src:set(baseIP + counter)
 			counter = incAndWrap(counter, flows)
-		end) 
+		end)
+
+                if t == nil
+		then
+			t = 15000000 
+		end
 
                 table.insert(latency, t)
                 rateLimit:wait()
