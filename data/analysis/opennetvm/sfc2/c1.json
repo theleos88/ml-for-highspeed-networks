@@ -1,0 +1,12 @@
+{
+        "globals": [
+                {
+                        "directory": "logs"
+                }
+        ],
+	"firewall": [
+                {
+                        "parameters": "1 -d 2 -f rules.json"
+                }
+        ],
+}
