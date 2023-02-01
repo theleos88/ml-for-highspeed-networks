@@ -1,0 +1,32 @@
+{
+        "globals": [
+                {
+                        "directory": "logs"
+                }
+        ],
+	"flow_tracker": [
+                {
+                        "parameters": "3 -d 5"
+                }
+        ],
+        "nf_router": [
+                {
+                        "parameters": "1 -f /home/tzhang/rca-nfv/opennetvm/sfc3/route.conf"
+                }
+        ],
+        "ndpi_stats": [
+                {
+                        "parameters": "2 -d 5"
+                }
+        ],
+        "payload_scan": [
+                {
+                        "parameters": "4 -d 5 -s 1 -i"
+                }
+        ],
+        "bridge": [
+                {
+                        "parameters": "5"
+                }
+        ]
+}
