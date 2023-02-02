@@ -1,5 +1,8 @@
 This directory contains some explorative experimental results related to the high-speed [OpenNetVM platform](https://github.com/sdnfv/openNetVM) on a COTS server. 
 
+![fishy](netvm-arch.png)
+
+
 The experiments include 4 different Service Function Chaining (SFC) settings:
 
 1. Linear 
