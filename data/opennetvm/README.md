@@ -1,4 +1,4 @@
-This directory contains some explorative experimental results related to the high-speed OpenNetVM platform on a COTS server. 
+This directory contains some explorative experimental results related to the high-speed [OpenNetVM platform](https://github.com/sdnfv/openNetVM) on a COTS server. 
 
 The experiments include 4 different Service Function Chaining (SFC) settings:
 
