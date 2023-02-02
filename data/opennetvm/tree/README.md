@@ -2,4 +2,4 @@ Tree SFC topology
 
 Configuration:
 
-![Tree SFC](tree.png-1.png)
+![Tree SFC](assets/tree.png-1.png)
